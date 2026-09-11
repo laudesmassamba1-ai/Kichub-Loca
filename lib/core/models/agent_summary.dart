@@ -3,7 +3,6 @@ class AgentSummary {
     required this.id,
     required this.nom,
     required this.email,
-    required this.role,
     required this.totalCommerces,
     required this.totalVisites,
     required this.acceptes,
@@ -16,7 +15,6 @@ class AgentSummary {
   final String id;
   final String nom;
   final String email;
-  final String role;
   final int totalCommerces;
   final int totalVisites;
   final int acceptes;
@@ -30,7 +28,6 @@ class AgentSummary {
       id: json['id'] as String,
       nom: (json['nom'] ?? '').toString(),
       email: (json['email'] ?? '').toString(),
-      role: (json['role'] ?? 'agent').toString(),
       totalCommerces: (json['total_commerces'] ?? 0).toInt(),
       totalVisites: (json['total_visites'] ?? 0).toInt(),
       acceptes: (json['acceptes'] ?? 0).toInt(),

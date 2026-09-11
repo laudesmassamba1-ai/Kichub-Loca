@@ -39,7 +39,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final name = _summary?['nom'] ??
         user?.userMetadata?['nom'] ??
         'Agent Kichub';
-    final role = (_summary?['role'] ?? 'agent').toString();
     final totalCommerces = _summary?['total_commerces'] ?? 0;
     final totalVisits = _summary?['total_visites'] ?? 0;
 
@@ -128,11 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 14),
-                            _InfoRow(
-                              label: 'Rôle',
-                              value: role == 'admin' ? 'Administrateur' : 'Agent terrain',
-                            ),
-                            _InfoRow(label: 'Statut', value: 'Actif'),
+                            _InfoRow(label: 'Statut', value: 'Membre actif'),
                           ],
                         ),
                       ),

@@ -11,7 +11,6 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   nom text not null default '',
   email text,
-  role text not null default 'agent',
   created_at timestamptz not null default now()
 );
 
@@ -69,12 +68,11 @@ security definer
 set search_path = public, auth
 as $$
 begin
-  insert into public.profiles (id, nom, email, role)
+  insert into public.profiles (id, nom, email)
   values (
     new.id,
     coalesce(new.raw_user_meta_data ->> 'nom', split_part(new.email, '@', 1)),
-    new.email,
-    'agent'
+    new.email
   )
   on conflict (id) do update
   set email = excluded.email,
@@ -130,7 +128,6 @@ returns table (
   id uuid,
   nom text,
   email text,
-  role text,
   total_commerces bigint,
   total_visites bigint,
   acceptes bigint,
@@ -146,7 +143,6 @@ as $$
     p.id,
     p.nom,
     p.email,
-    p.role,
     coalesce((select count(*) from public.commerces c where c.cree_par = p.id), 0),
     coalesce((select count(*) from public.visites v where v.agent_id = p.id), 0),
     coalesce((select count(*) from public.visites v where v.agent_id = p.id and v.statut = 'accepte'), 0),
@@ -161,8 +157,7 @@ as $$
       0
     )
   from public.profiles p
-  where p.role <> 'admin'
-  order by 11 desc;
+  order by 10 desc;
 $$;
 
 -- Statistiques globales du dashboard
@@ -183,7 +178,7 @@ as $$
   select
     (select count(*) from public.commerces),
     (select count(*) from public.visites),
-    (select count(*) from public.profiles where role <> 'admin'),
+    (select count(*) from public.profiles),
     (select count(*) from public.visites where statut = 'nouveau'),
     (select count(*) from public.visites where statut = 'accepte'),
     (select count(*) from public.visites where statut = 'refuse'),
@@ -291,8 +286,10 @@ for select using (auth.role() = 'authenticated');
 create policy "commerces_insert_own" on public.commerces
 for insert with check (cree_par = auth.uid());
 
-create policy "commerces_update_own" on public.commerces
-for update using (cree_par = auth.uid());
+-- Tout membre authentifié peut mettre à jour un commerce :
+-- un agent B qualifie un commerce créé par l'agent A.
+create policy "commerces_update_all" on public.commerces
+for update using (auth.role() = 'authenticated');
 
 create policy "commerces_delete_own" on public.commerces
 for delete using (cree_par = auth.uid());

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kichub_loca/core/theme/app_theme.dart';
 import 'package:kichub_loca/core/services/supabase_service.dart';
-import 'package:kichub_loca/features/admin/admin_dashboard_screen.dart';
 import 'package:kichub_loca/features/auth/login_screen.dart';
 import 'package:kichub_loca/features/dashboard/dashboard_screen.dart';
 import 'package:kichub_loca/features/field/agents_screen.dart';
@@ -25,7 +24,6 @@ class AppRoutes {
   static const profile = '/profile';
   static const reminders = '/reminders';
   static const history = '/history';
-  static const admin = '/admin';
   static const visitFlow = '/visit-flow';
   static const agents = '/agents';
   static const prospects = '/prospects';
@@ -52,7 +50,6 @@ class KichubApp extends StatelessWidget {
         AppRoutes.profile: (_) => const ProfileScreen(),
         AppRoutes.reminders: (_) => const RemindersScreen(),
         AppRoutes.history: (_) => const VisitHistoryScreen(),
-        AppRoutes.admin: (_) => const AdminDashboardScreen(),
         AppRoutes.agents: (_) => const AgentDirectoryScreen(),
         AppRoutes.prospects: (_) => const ProspectsScreen(),
         AppRoutes.dashboard: (_) => const DashboardScreen(),
@@ -127,18 +124,9 @@ class MissingConfigScreen extends StatelessWidget {
                     '--dart-define=SUPABASE_ANON_KEY pour lancer l\'app.',
                   ),
                   const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRoutes.admin,
-                        );
-                      },
-                      icon: const Icon(Icons.dashboard_rounded),
-                      label: const Text('Ouvrir le dashboard démo'),
-                    ),
+                  const Text(
+                    'Contacte le responsable du projet pour obtenir une '
+                    'installation fonctionnelle de l\'application.',
                   ),
                 ],
               ),
