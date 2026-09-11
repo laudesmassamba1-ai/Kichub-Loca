@@ -16,6 +16,37 @@ env:
   SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
 jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Récupère le code source
+        uses: actions/checkout@v4
+
+      - name: Installation de Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Récupération des dépendances
+        run: flutter pub get
+
+      - name: Build iOS (non signé, test personnel)
+        run: |
+          flutter build ios --release --no-codesign \
+            --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
+
+      - name: Empaqueter le .app
+        run: |
+          cd build/ios/iphoneos && zip -r ../../kichub-loca-ios.app.zip Runner.app
+
+      - name: Upload iOS (.app non signé)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kichub-loca-ios
+          path: build/kichub-loca-ios.app.zip
+
   build:
     runs-on: ubuntu-latest
     steps:
